@@ -15,9 +15,9 @@ var MongoStore = require('connect-mongo')(session);
 
 // database setup
 app.use(session({
-  secret: config.session_secret,
+  secret: 'test',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   cookie: { secure: true },
   maxAge: 30 * 60 * 1000,
   store: new MongoStore({ mongooseConnection: db.connection })

@@ -3,18 +3,13 @@ var router = express.Router();
 var db = require('../database');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', {
-    title: 'Express'
-  });
-});
 
 router.post('/add', function(req, res, next) {
   var sess = req.session;
   if (typeof sess.kid === "undefined") {
 
     if (typeof req.body.name === "undefined") {
-      res.render(JSON.stringify({
+      res.end(JSON.stringify({
         "success": "no",
         "msg": "no name"
       }));
@@ -22,7 +17,7 @@ router.post('/add', function(req, res, next) {
     } else {
       req.body.name = req.body.name.trim();
       if (req.body.name.length == 0 || req.body.name.length > 50) {
-        res.render(JSON.stringify({
+        res.end(JSON.stringify({
           "success": "no",
           "msg": "length incorrect"
         }));
@@ -30,81 +25,95 @@ router.post('/add', function(req, res, next) {
       }
     }
 
-    var instance = new db.karthongSchema();
+    var instance = new db.Krathong();
 
     instance.name = req.body.name;
-    instace.attack = 0;
-    instace.rid = Math.ramdom();
+    instance.attack = 0;
+    instance.rid = Math.floor(Math.random() * 1000000000);
     instance.start = Date.now();
     instance.end = 0;
 
-    var log = new db.logSchema();
-    log.message = instance.name + " born.";
+    var log = new db.Log();
+    log.message = req.body.name + " born.";
     log.timestamp = Date.now();
     log.save();
 
+    sess.die = false;
+    sess.save();
+
     instance.save(function(err) {
       if (err) {
-        res.render(JSON.stringify({
+        res.end(JSON.stringify({
           "success": "no",
           "msg": "save error"
         }));
       } else {
-        res.render('{"success": "yes"}');
+        res.end('{"success": "yes"}');
       }
     });
 
 
   } else {
-    res.render(JSON.stringify({
+    res.end(JSON.stringify({
       "success": "no",
       "msg": "duplicate"
     }));
   }
 });
 
-rounter.get('/attack', function(req, res, next) {
+router.post('/attack', function(req, res, next) {
   var sess = req.session;
 
+  if (session.die == true) {
+    return res.end(JSON.stringify({
+      "success": "no",
+      "msg": "you're die"
+    }));
+  }
+
   if (typeof sess.attacktime !== "undefined" && Date.now() - sess.attacktime < 200) {
-    return res.render(JSON.stringify({
+    sess.attacktime = Date.now();
+    sess.save();
+    return res.end(JSON.stringify({
       "success": "no",
       "msg": "flooding"
     }));
   }
 
-  if(typeof req.query.id !== "number") {
-    return res.render(JSON.stringify({
+  if(typeof req.body.id !== "string") {
+    return res.end(JSON.stringify({
       "success": "no",
-      "msg": "not a number"
+      "msg": "not a string"
     }));
   }
 
-  db.karthongSchema.findById(req.query.id, function (err, krathong) {
+  var Krathong = db.Krathong;
+  Krathong.findById(req.body.id, function (err, kt) {
     if (err) {
-      return res.sender(JSON.stringify({
+      console.log(err);
+      return res.end(JSON.stringify({
         "success": "no",
         "msg": "error"
       }));
     }
 
-    krathong.attack = parseInt(krathong.attack) + 1;
-    if(krathong.attack >= 10 && krathong.end === 0) {
-      krathong.end = Date.now();
+    kt.attack = parseInt(kt.attack) + 1;
+    if(kt.attack >= 10 && kt.end === 0) {
+      kt.end = Date.now();
 
-      var log = new db.logSchema();
+      var log = new dbc.logSchema();
       log.message = instance.name + " has drown.";
       log.timestamp = Date.now();
       log.save();
     }
 
-    krathong.save(function (err) {
-      if (err) return res.sender(JSON.stringify({
+    kt.save(function (err) {
+      if (err) return res.end(JSON.stringify({
         "success": "no",
         "msg": "error"
       }));
 
-      return res.sender(JSON.stringify({
+      return res.end(JSON.stringify({
         "success": "yes"
       }));
     });
@@ -112,11 +121,14 @@ rounter.get('/attack', function(req, res, next) {
 
 });
 
-rounter.get('/data', function(req, res, next) {
+router.get('/data', function(req, res, next) {
   var sess = req.session;
 
+  console.log(sess);
   if (typeof sess.fetchtime !== "undefined" && Date.now() - sess.fetchtime < 60000) {
-    res.render(JSON.stringify({
+    req.session.fetchtime = Date.now();
+    req.session.save();
+    res.end(JSON.stringify({
       "success": "no",
       "msg": "flooding",
       "data": []
@@ -124,37 +136,48 @@ rounter.get('/data', function(req, res, next) {
     return ;
   }
 
-  var rand = Math.random()
-  result = db.docs.find({
+  function clean(data) {
+    return data.map(function(x) {
+      delete x.__v;
+      delete x.start,
+      delete x.end;
+      delete x.rid;
+      return x;
+    });
+  }
+
+  var rand = Math.random();
+  var Krathong = db.Krathong;
+  result = Krathong.find({
     rid: {
       $gte: rand
     }
   }).limit(100).lean().exec(function(err, data) {
     if(err || data.length === 0) {
 
-      result = db.docs.find({
+      result = Krathong.find({
         rid: {
           $lte: rand
         }
       }).limit(100).lean().exec(function(err2, datal) {
-        if(err2 || datal.length === 0) {
-          return res.render(JSON.stringify({
+        if(err2) {
+          return res.end(JSON.stringify({
             "success": "no",
             "msg": "err",
             "data": []
           }))
         } else {
-          return res.render(JSON.stringify({
+          return res.end(JSON.stringify({
             "success": "yes",
-            "data": datal
+            "data": clean(datal)
           }));
         }
       });
 
     } else {
-      return res.render(JSON.stringify({
+      return res.end(JSON.stringify({
         "success": "yes",
-        "data": data
+        "data": clean(data)
       }));
     }
   });

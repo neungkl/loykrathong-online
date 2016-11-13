@@ -5,7 +5,7 @@ var Schema = mongoose.Schema,
 
 mongoose.connect(config.db_connect);
 
-var Karthong = new Schema({
+var Krathong = new Schema({
     id: ObjectId,
     name: String,
     attack: { type: Number, index: true },
@@ -17,10 +17,12 @@ var Karthong = new Schema({
 var Log = new Schema({
   message: String,
   timestamp: { type: Date, default: Date.now }
-})
+});
 
 module.exports = {
-  karthongSchema: Karthong,
+  krathongSchema: Krathong,
+  Krathong: mongoose.model('Krathong', Krathong),
   logSchema: Log,
+  Log: mongoose.model('Log', Log),
   connection: mongoose.connection
 }

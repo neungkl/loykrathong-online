@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Loy Krathong Online</title>
+  </head>
+  <body>
+
+    <input type="text" id="name">
+    <input type="button" id="test-add" value="Add">
+
+    <input type="text" id="id">
+    <input type="button" id="test-attack" value="Attack">
+
+    <div id="data">
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.10.2/paper-core.min.js"
+      integrity="sha256-DdPeti72ss+GwsHWo9Kje4YEd61XxVwgVxZgbE8Xl2A="
+      crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"></script>
+    <script>
+      $(function() {
+        $.ajax({
+          url: './data',
+          success: function(res) {
+            console.log(res);
+            $('#data').html(JSON.stringify(res));
+          }
+        });
+
+        $('#test-add').click(function() {
+          $.ajax({
+            url: './add',
+            type: 'post',
+            data: {
+              name: $('#name').val()
+            },
+            success: function(res) {
+              console.log(res);
+            }
+          })
+        });
+
+        $('#test-attack').click(function() {
+          $.ajax({
+            url: './attack',
+            type: 'post',
+            data: {
+              id: $('#id').val()
+            },
+            success: function(res) {
+              console.log(res);
+            }
+          })
+        });
+      });
+    </script>
+  </body>
+</html>
