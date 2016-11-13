@@ -1,10 +1,11 @@
 var mongoose = require('mongoose');
+var config = require('./config');
 var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
-mongoose.connect('mongodb://127.0.0.1/loykrathong');
+mongoose.connect(config.db_connect);
 
-var Kartong = new Schema({
+var Karthong = new Schema({
     id: ObjectId,
     name: String,
     attack: { type: Number, index: true },

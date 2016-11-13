@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var config = require('./config');
 var index = require('./routes/index');
 
 var app = express();
@@ -13,9 +14,8 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
 // database setup
-
 app.use(session({
-  secret: 'thisisaloykrathong',
+  secret: config.session_secret,
   resave: false,
   saveUninitialized: false,
   cookie: { secure: true },
