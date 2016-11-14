@@ -117,3 +117,7 @@ a {
 	color: rgb(126, 47, 26);
 	border: none;
 }
+
+.share a {
+	color: inherit;
+}

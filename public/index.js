@@ -5,7 +5,7 @@ var myScore = -1;
 var isDie = false;
 
 function initStyle() {
-  $('.game').css('height', $('body').outerHeight() - $('.header').outerHeight() - $('.footer').outerHeight() - 0);
+  $('.game').css('height', $('html').height() - $('.header').outerHeight() - $('.footer').outerHeight());
 }
 
 function fetchLog() {
@@ -71,18 +71,22 @@ function fetchMe() {
     dataType: 'json',
     success: function(res) {
       if(res.success) {
+        if(isDie) return ;
         if(res.attack <= res.life) {
           $('.footer .enter-name').hide();
           $('.footer .scoring').show();
           $('.footer .scoring .btn').hide();
 
-          myScore = 10;
+          isDie = false;
+          if(myScore == -1) myScore = 10;
           $('.footer .scoring span').text('กระทงคุณลอยได้ไกล ' + myScore + ' เมตร (เหลือชีวิตอีก ' + (res.life - res.attack) + ' ชีวิต)');
         } else {
           if(myScore != -1) {
-            isDie = true;
+            if(!isDie) share(myScore);
             $('.footer .scoring span').text('กระทงคุณจมแล้ว ด้วยระยะทาง ' + myScore + ' เมตร');
             $('.footer .scoring .btn').show();
+
+            isDie = true;
           }
         }
       } else {
@@ -116,6 +120,7 @@ function add() {
         }
       } else {
         alertify.alert('สร้างกระทงของคุณเสร็จแล้ว คุณสามารถกดที่กระทงของเพื่อนเพื่อคว่ำกระทงเพื่อนได้เลยนะ :P');
+        isDie = false;
         myScore = 10;
       }
     },
@@ -131,6 +136,20 @@ function spawn() {
     render.spawnKrathong(otherData[0].name, otherData[0].id);
     otherData.shift();
   }
+}
+
+function share(score) {
+
+  $('.share .score').text(score);
+  $('.share').show();
+
+  $(window).one('click', function() {
+    $('.share').hide();
+  });
+
+  $('.share .ok').one('click', function() {
+    $('.share').hide();
+  });
 }
 
 $(function() {
