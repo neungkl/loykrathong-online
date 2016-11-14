@@ -29,4 +29,4 @@ So sad it's too late but I'm still having fun with it.
 
 1. Forget about `config.js`
 2. Set some env variables `MONGODB_URI`, `SESSION_SECRET` (session encryption key)
-3. Ready to deploy to Heroku
+3. Ready to deploy to Heroku.
