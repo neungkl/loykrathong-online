@@ -18,12 +18,12 @@ function fetchLog() {
         x = x.message;
 
         if(x.indexOf(' born.') !== -1) {
-          x = x.replace(' born.', '');
+          x = x.replace(' born.', '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
           return '<div class="pure-u-1-1">' +
           '<span>กระทงของ ' + x + ' </span><span class="pass">สร้างแล้ว</span>' +
           '</div>';
         } else {
-          x = x.replace(' has drown.', '');
+          x = x.replace(' born.', '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
           return '<div class="pure-u-1-1">' +
           '<span>กระทงของ ' + x + ' </span><span class="fail">จมแล้ว</span>' +
           '</div>';
