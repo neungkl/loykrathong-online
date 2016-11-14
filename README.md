@@ -3,6 +3,8 @@ Loykrathong Online
 
 <img src="preview.png" width="600">
 
+Available demo here :D [https://loykrathong.herokuapp.com/](https://loykrathong.herokuapp.com/)
+
 Loy Krathong is a festival celebrated annually in Thailand.
 
 I've write some multi-player game web application for leading player
