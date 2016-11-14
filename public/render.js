@@ -51,7 +51,7 @@ var render = (function() {
     width = w;
     height = h;
 
-    var renderer = PIXI.autoDetectRenderer(width, height,{backgroundColor : 0x333333});
+    var renderer = PIXI.autoDetectRenderer(width, height,{backgroundColor : 0x333333, antialias: true});
     document.getElementById('render').appendChild(renderer.view);
 
     // create the root of the scene graph
