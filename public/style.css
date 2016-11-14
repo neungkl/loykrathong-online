@@ -72,19 +72,23 @@ a {
   color: #f8f8f8;
 }
 
+.game {
+	background-color: #f8f8f8;
+}
+
 .game .report {
 	padding: 20px;
 }
 .game .report .heading {
-	font-size: 1.5em;
+	font-size: 1.2em;
 }
 .game .report .pass {
 	background: rgb(52, 140, 21);
 	color: #fff;
 	padding: 1px 4px;
 }
-.game .report .reject {
-	background: rgb(52, 140, 21);
+.game .report .fail {
+	background: rgb(195, 11, 11);
 	color: #fff;
 	padding: 1px 4px;
 }
@@ -104,11 +108,11 @@ a {
 	background: none;
 	padding: 3px;
 	text-align: center;
-	margin: 0px 7px;
+	margin: 0px 2px;
 }
 
 .footer .btn {
-	padding: 6px 10px;
+	padding: 2px 5px;
 	background-color: #f8f8f8;
 	color: rgb(126, 47, 26);
 	border: none;

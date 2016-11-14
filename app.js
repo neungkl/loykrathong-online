@@ -5,21 +5,20 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var config = require('./config');
-var index = require('./routes/index');
-
 var app = express();
 var db = require('./database');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
+var config = require('./config');
+var index = require('./routes/index');
+
 // database setup
 app.use(session({
-  secret: 'test',
+  secret: config.session_secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true },
-  maxAge: 30 * 60 * 1000,
+  maxAge: 20 * 60 * 1000,
   store: new MongoStore({ mongooseConnection: db.connection })
 }));
 

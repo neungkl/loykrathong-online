@@ -4,10 +4,12 @@ var db = require('../database');
 
 /* GET home page. */
 
+var LIFE = 50;
+
 router.post('/add', function(req, res, next) {
   var sess = req.session;
 
-  if (sess.die == false) {
+  if (sess.die == false && typeof sess.kid === "string") {
     return res.end(JSON.stringify({
       'success': 'no',
       'msg': 'already created'
@@ -42,17 +44,25 @@ router.post('/add', function(req, res, next) {
     log.timestamp = Date.now();
     log.save();
 
-    sess.die = false;
-    sess.save();
+    req.session.die = false;
+    req.session.save();
 
-    instance.save(function(err) {
+    instance.save(function(err, ins) {
       if (err) {
         res.end(JSON.stringify({
           'success': 'no',
           'msg': 'save error'
         }));
       } else {
-        res.end('{"success": "yes"}');
+        req.session.kid = ins._id;
+        req.session.save();
+
+        console.log(ins._id);
+
+        return res.end(JSON.stringify({
+          'success': 'yes',
+          'id': ins._id
+        }));
       }
     });
 
@@ -62,7 +72,7 @@ router.post('/add', function(req, res, next) {
 router.post('/attack', function(req, res, next) {
   var sess = req.session;
 
-  if (session.die == true) {
+  if (sess.die == true) {
     return res.end(JSON.stringify({
       'success': 'no',
       'msg': 'you\'re die'
@@ -85,10 +95,16 @@ router.post('/attack', function(req, res, next) {
     }));
   }
 
+  if(sess.kid == req.body.id) {
+    return res.end(JSON.stringify({
+      'success': 'no',
+      'msg': 'yourself'
+    }));
+  }
+
   var Krathong = db.Krathong;
   Krathong.findById(req.body.id, function (err, kt) {
     if (err) {
-      console.log(err);
       return res.end(JSON.stringify({
         'success': 'no',
         'msg': 'error'
@@ -96,11 +112,11 @@ router.post('/attack', function(req, res, next) {
     }
 
     kt.attack = parseInt(kt.attack) + 1;
-    if(kt.attack >= 10 && kt.end === 0) {
+    if(kt.attack > LIFE && kt.end < kt.start) {
       kt.end = Date.now();
 
-      var log = new dbc.logSchema();
-      log.message = instance.name + ' has drown.';
+      var log = new db.Log();
+      log.message = kt.name + ' has drown.';
       log.timestamp = Date.now();
       log.save();
     }
@@ -112,36 +128,53 @@ router.post('/attack', function(req, res, next) {
       }));
 
       return res.end(JSON.stringify({
-        'success': 'yes'
+        'success': 'yes',
+        'isDown': (kt.attack > LIFE)
       }));
     });
   });
 
 });
 
-router.post('/me', function(req, res, next) {
+router.get('/me', function(req, res, next) {
   var sess = req.session;
 
-  if(typeof req.body.id !== "string") {
+  if(typeof sess.kid !== "string") {
     return res.end(JSON.stringify({
         'success': 'no',
-        'msg': 'not a string'
+        'msg': 'no krathong'
     }));
   }
 
-  db.Krathong.findById(req.body.id, function (err, kt) {
-    delete kt._id;
-    delete kt.__v;
-    delete kt.start;
-    delete kt.end;
-    delete kt.rid;
+  db.Krathong.findById(sess.kid, function (err, kt) {
+    if(err) {
+      return res.end(JSON.stringify({
+        'suscess': 'no',
+        'msg': 'error'
+      }));
+    }
 
-    if(kt.attack >= 10) {
+    if(kt == null || typeof kt === "undefined") {
+      sess.kid = false;
+      sess.die = true;
+      sess.save();
+      return res.end(JSON.stringify({
+        'success': 'no',
+        'msg': 'no data'
+      }))
+    }
+
+    if(kt.attack > LIFE) {
       req.session.die = true;
       req.session.save();
     }
 
-    return res.end(JSON.stringify(kt));
+    return res.end(JSON.stringify({
+      success: 'yes',
+      name: kt.name,
+      attack: kt.attack,
+      life: LIFE
+    }));
   });
 });
 
@@ -161,11 +194,11 @@ router.get('/data', function(req, res, next) {
 
   function clean(data) {
     return data.map(function(x) {
-      delete x.__v;
-      delete x.start,
-      delete x.end;
-      delete x.rid;
-      return x;
+      return {
+        id: x._id,
+        name: x.name,
+        attack: x.attack
+      };
     });
   }
 
@@ -174,15 +207,21 @@ router.get('/data', function(req, res, next) {
   result = Krathong.find({
     rid: {
       $gte: rand
+    },
+    attack: {
+      $lte: LIFE
     }
-  }).limit(100).lean().exec(function(err, data) {
+  }).limit(40).lean().exec(function(err, data) {
     if(err || data.length === 0) {
 
       result = Krathong.find({
         rid: {
           $lte: rand
+        },
+        attack: {
+          $lte: LIFE
         }
-      }).limit(100).lean().exec(function(err2, datal) {
+      }).limit(40).lean().exec(function(err2, datal) {
         if(err2) {
           return res.end(JSON.stringify({
             'success': 'no',
@@ -211,7 +250,7 @@ router.get('/log', function(req, res, next) {
 
   var now = new Date();
   var logDate = new Date(now);
-  logDate.setMinutes(logDate.getMinutes() - 5);
+  logDate.setMinutes(logDate.getMinutes() - 10);
 
   db.Log.find({
     timestamp: {
@@ -221,8 +260,10 @@ router.get('/log', function(req, res, next) {
 
   function clean(data) {
     return data.map(function(x) {
-      delete x.__v;
-      return x;
+      return {
+        message: x.message,
+        timestamp: x.timestamp
+      };
     });
   }
 
@@ -233,7 +274,6 @@ router.get('/log', function(req, res, next) {
         'msg': 'error'
       }));
     }
-    console.log(clean(data));
     return res.end(JSON.stringify(clean(data)));
   });
 });
