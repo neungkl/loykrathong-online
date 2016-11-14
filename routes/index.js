@@ -6,22 +6,26 @@ var db = require('../database');
 
 router.post('/add', function(req, res, next) {
   var sess = req.session;
-  if (typeof sess.kid === "undefined") {
 
-    if (typeof req.body.name === "undefined") {
-      res.end(JSON.stringify({
-        "success": "no",
-        "msg": "no name"
+  if (sess.die == false) {
+    return res.end(JSON.stringify({
+      'success': 'no',
+      'msg': 'already created'
+    }));
+  } else {
+
+    if (typeof req.body.name === 'undefined') {
+      return res.end(JSON.stringify({
+        'success': 'no',
+        'msg': 'no name'
       }));
-      return;
     } else {
       req.body.name = req.body.name.trim();
       if (req.body.name.length == 0 || req.body.name.length > 50) {
-        res.end(JSON.stringify({
-          "success": "no",
-          "msg": "length incorrect"
+        return res.end(JSON.stringify({
+          'success': 'no',
+          'msg': 'length incorrect'
         }));
-        return;
       }
     }
 
@@ -34,7 +38,7 @@ router.post('/add', function(req, res, next) {
     instance.end = 0;
 
     var log = new db.Log();
-    log.message = req.body.name + " born.";
+    log.message = req.body.name + ' born.';
     log.timestamp = Date.now();
     log.save();
 
@@ -44,20 +48,14 @@ router.post('/add', function(req, res, next) {
     instance.save(function(err) {
       if (err) {
         res.end(JSON.stringify({
-          "success": "no",
-          "msg": "save error"
+          'success': 'no',
+          'msg': 'save error'
         }));
       } else {
         res.end('{"success": "yes"}');
       }
     });
 
-
-  } else {
-    res.end(JSON.stringify({
-      "success": "no",
-      "msg": "duplicate"
-    }));
   }
 });
 
@@ -66,24 +64,24 @@ router.post('/attack', function(req, res, next) {
 
   if (session.die == true) {
     return res.end(JSON.stringify({
-      "success": "no",
-      "msg": "you're die"
+      'success': 'no',
+      'msg': 'you\'re die'
     }));
   }
 
-  if (typeof sess.attacktime !== "undefined" && Date.now() - sess.attacktime < 200) {
+  if (typeof sess.attacktime !== 'undefined' && Date.now() - sess.attacktime < 300) {
     sess.attacktime = Date.now();
     sess.save();
     return res.end(JSON.stringify({
-      "success": "no",
-      "msg": "flooding"
+      'success': 'no',
+      'msg': 'flooding'
     }));
   }
 
-  if(typeof req.body.id !== "string") {
+  if(typeof req.body.id !== 'string') {
     return res.end(JSON.stringify({
-      "success": "no",
-      "msg": "not a string"
+      'success': 'no',
+      'msg': 'not a string'
     }));
   }
 
@@ -92,8 +90,8 @@ router.post('/attack', function(req, res, next) {
     if (err) {
       console.log(err);
       return res.end(JSON.stringify({
-        "success": "no",
-        "msg": "error"
+        'success': 'no',
+        'msg': 'error'
       }));
     }
 
@@ -102,36 +100,61 @@ router.post('/attack', function(req, res, next) {
       kt.end = Date.now();
 
       var log = new dbc.logSchema();
-      log.message = instance.name + " has drown.";
+      log.message = instance.name + ' has drown.';
       log.timestamp = Date.now();
       log.save();
     }
 
     kt.save(function (err) {
       if (err) return res.end(JSON.stringify({
-        "success": "no",
-        "msg": "error"
+        'success': 'no',
+        'msg': 'error'
       }));
 
       return res.end(JSON.stringify({
-        "success": "yes"
+        'success': 'yes'
       }));
     });
   });
 
 });
 
+router.post('/me', function(req, res, next) {
+  var sess = req.session;
+
+  if(typeof req.body.id !== "string") {
+    return res.end(JSON.stringify({
+        'success': 'no',
+        'msg': 'not a string'
+    }));
+  }
+
+  db.Krathong.findById(req.body.id, function (err, kt) {
+    delete kt._id;
+    delete kt.__v;
+    delete kt.start;
+    delete kt.end;
+    delete kt.rid;
+
+    if(kt.attack >= 10) {
+      req.session.die = true;
+      req.session.save();
+    }
+
+    return res.end(JSON.stringify(kt));
+  });
+});
+
 router.get('/data', function(req, res, next) {
   var sess = req.session;
 
-  console.log(sess);
-  if (typeof sess.fetchtime !== "undefined" && Date.now() - sess.fetchtime < 60000) {
-    req.session.fetchtime = Date.now();
-    req.session.save();
+  if (typeof sess.fetchtime !== 'undefined' && Date.now() - sess.fetchtime < 1000) {
+    sess.fetchtime = Date.now();
+    sess.save();
     res.end(JSON.stringify({
-      "success": "no",
-      "msg": "flooding",
-      "data": []
+      'success': 'no',
+      'msg': 'flooding',
+      'data': []
     }));
     return ;
   }
@@ -162,26 +185,57 @@ router.get('/data', function(req, res, next) {
       }).limit(100).lean().exec(function(err2, datal) {
         if(err2) {
           return res.end(JSON.stringify({
-            "success": "no",
-            "msg": "err",
-            "data": []
+            'success': 'no',
+            'msg': 'err',
+            'data': []
           }))
         } else {
           return res.end(JSON.stringify({
-            "success": "yes",
-            "data": clean(datal)
+            'success': 'yes',
+            'data': clean(datal)
           }));
         }
       });
 
     } else {
       return res.end(JSON.stringify({
-        "success": "yes",
-        "data": clean(data)
+        'success': 'yes',
+        'data': clean(data)
       }));
     }
   });
 
+});
+
+router.get('/log', function(req, res, next) {
+
+  var now = new Date();
+  var logDate = new Date(now);
+  logDate.setMinutes(logDate.getMinutes() - 5);
+
+  db.Log.find({
+    timestamp: {
+      $lte: logDate
+    }
+  }).remove().exec();
+
+  function clean(data) {
+    return data.map(function(x) {
+      delete x.__v;
+      return x;
+    });
+  }
+
+  db.Log.find({}, function(err, data) {
+    if(err) {
+      return res.end(JSON.stringify({
+        'success': 'no',
+        'msg': 'error'
+      }));
+    }
+    console.log(clean(data));
+    return res.end(JSON.stringify(clean(data)));
+  });
 });
 
 module.exports = router;

@@ -1,0 +1,115 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+* {
+	font-family: 'Kanit', Tahoma, sans-serif !important;
+}
+html {
+	width: 100%;
+	height: 100%;
+}
+body {
+	line-height: 1;
+	font-weight: 300;
+	height: 100%;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+a {
+    color: #00B7FF;
+}
+
+.thin-font {
+  font-weight: 200;
+}
+
+.header {
+  background-color: rgb(20, 126, 149);
+  padding: 15px 30px;
+  font-size: 1.5em;
+  color: #f8f8f8;
+}
+
+.game .report {
+	padding: 20px;
+}
+.game .report .heading {
+	font-size: 1.5em;
+}
+.game .report .pass {
+	background: rgb(52, 140, 21);
+	color: #fff;
+	padding: 1px 4px;
+}
+.game .report .reject {
+	background: rgb(52, 140, 21);
+	color: #fff;
+	padding: 1px 4px;
+}
+.game .report .pure-u-1-1 {
+	padding: 6px 0px;
+}
+
+.footer {
+	padding: 20px;
+	color: #fff;
+	background-color: rgb(126, 47, 26);
+}
+
+.footer #name {
+	border: none;
+	border-bottom: 1px solid #fff;
+	background: none;
+	padding: 3px;
+	text-align: center;
+	margin: 0px 7px;
+}
+
+.footer .btn {
+	padding: 6px 10px;
+	background-color: #f8f8f8;
+	color: rgb(126, 47, 26);
+	border: none;
+}

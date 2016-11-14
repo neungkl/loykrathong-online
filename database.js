@@ -16,7 +16,7 @@ var Krathong = new Schema({
 
 var Log = new Schema({
   message: String,
-  timestamp: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now, index: true }
 });
 
 module.exports = {
