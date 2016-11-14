@@ -15,7 +15,7 @@ var index = require('./routes/index');
 
 // database setup
 app.use(session({
-  secret: config.session_secret,
+  secret: process.env.SESSION_SECRET || config.session_secret,
   resave: false,
   saveUninitialized: true,
   maxAge: 20 * 60 * 1000,

@@ -3,7 +3,7 @@ var config = require('./config');
 var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
-mongoose.connect(config.db_connect);
+mongoose.connect(process.env.MONGODB_URI || config.db_connect);
 
 var Krathong = new Schema({
     id: ObjectId,
