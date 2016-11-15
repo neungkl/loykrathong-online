@@ -4,7 +4,7 @@ var db = require('../database');
 
 /* GET home page. */
 
-var LIFE = 20;
+var LIFE = 5;
 
 router.post('/add', function(req, res, next) {
   var sess = req.session;
