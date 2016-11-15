@@ -10,4 +10,5 @@ services:
   - mongodb
 script:
   - npm start &
+after_script:
   - npm stop
