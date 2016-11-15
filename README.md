@@ -1,6 +1,8 @@
 Loykrathong Online
 ===
 
+[![Build Status](https://travis-ci.org/neungkl/loykrathong-online.svg?branch=master)](https://travis-ci.org/neungkl/loykrathong-online)
+
 <img src="preview.png" width="600">
 
 Available demo here :D [https://loykrathong.herokuapp.com/](https://loykrathong.herokuapp.com/)
