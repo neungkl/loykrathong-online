@@ -59,7 +59,9 @@ a {
     color: inherit;
 }
 
-
+.kanit-font {
+	font-family: 'Kanit', Tahoma, sans-serif !important;
+}
 
 .thin-font {
   font-weight: 200;
