@@ -3,7 +3,7 @@ var render = (function() {
   var SIZE = 20;
 
   var IDLE = 0;
-  var FADE_OUT = 1;
+  var DIE = 1;
 
   var krathong = [];
   var data = [];
@@ -26,10 +26,7 @@ var render = (function() {
         if(res.success == 'yes') {
           if(res.isDown) {
             myScore += 10;
-            data[i].state = FADE_OUT;
-            $this.tint = 0xff0000;
-          } else {
-            $this.tint = 0xffffff;
+            data[i].state = DIE;
           }
           myScore += 2;
         } else if(res.msg == "you're die") {
@@ -121,7 +118,10 @@ var render = (function() {
         for(var i=0; i<SIZE; i++) {
           if(data[i].show) {
 
-            if(data[i].state == FADE_OUT) {
+            if(data[i].state == DIE) {
+
+              krathong[i].tint = 0xff0000;
+
               krathong[i].alpha = Math.max(0, krathong[i].alpha - 0.05);
               text[i].alpha = Math.max(0, text[i].alpha - 0.05);
 
