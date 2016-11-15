@@ -6,6 +6,7 @@ var render = (function() {
   var DIE = 1;
 
   var clickTime = 0;
+  var clickObject = -1;
 
   var krathong = [];
   var data = [];
@@ -19,6 +20,7 @@ var render = (function() {
     var i = this.id;
 
     clickTime = 0.8;
+    clickObject = i;
 
     $.ajax({
       url: './attack',
@@ -138,7 +140,9 @@ var render = (function() {
               krathong[i].tint = 0xffffff;
 
               if(clickTime > 0) {
-                krathong[i].tint = 0x999999;
+                if(i == clickObject) {
+                  krathong[i].tint = 0x999999;
+                }
                 clickTime -= 0.1;
               }
             }
