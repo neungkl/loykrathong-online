@@ -23,7 +23,7 @@ function fetchLog() {
           '<span>กระทงของ ' + x + ' </span><span class="pass">สร้างแล้ว</span>' +
           '</div>';
         } else {
-          x = x.replace(' born.', '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          x = x.replace(' has drown.', '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
           return '<div class="pure-u-1-1 kanit-font">' +
           '<span>กระทงของ ' + x + ' </span><span class="fail">จมแล้ว</span>' +
           '</div>';
