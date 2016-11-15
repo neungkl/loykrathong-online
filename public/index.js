@@ -5,6 +5,7 @@ var myScore = -1;
 var isDie = false;
 
 function initStyle() {
+  $('.game #render').css('height', $('html').height() - $('.header').outerHeight() - $('.footer').outerHeight());
   $('.game').css('height', $('html').height() - $('.header').outerHeight() - $('.footer').outerHeight());
 }
 
