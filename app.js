@@ -13,6 +13,8 @@ var MongoStore = require('connect-mongo')(session);
 var config = require('./config');
 var index = require('./routes/index');
 
+test
+
 // database setup
 app.use(session({
   secret: process.env.SESSION_SECRET || config.session_secret,
