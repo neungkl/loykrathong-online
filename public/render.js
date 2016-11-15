@@ -5,6 +5,8 @@ var render = (function() {
   var IDLE = 0;
   var DIE = 1;
 
+  var clickTime = 0;
+
   var krathong = [];
   var data = [];
   var text = [];
@@ -15,6 +17,9 @@ var render = (function() {
   function onKrathongClick() {
     var $this = this;
     var i = this.id;
+
+    clickTime = 0.8;
+
     $.ajax({
       url: './attack',
       type: 'post',
@@ -129,6 +134,13 @@ var render = (function() {
                 data[i].state = IDLE;
                 data[i].show = false;
               }
+            } else {
+              krathong[i].tint = 0xffffff;
+
+              if(clickTime > 0) {
+                krathong[i].tint = 0x999999;
+                clickTime -= 0.1;
+              }
             }
 
             krathong[i].position.y = (data[i].y + Math.sin(time + data[i].swing) * data[i].swingTensity);
@@ -158,6 +170,8 @@ var render = (function() {
       krathong[i].position.x = x;
       krathong[i].position.y = y;
       krathong[i].id = i;
+
+      krathong[i].tint = 0xffffff;
 
       text[i].position.x = x;
       text[i].position.y = y;
