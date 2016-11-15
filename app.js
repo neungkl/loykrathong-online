@@ -13,8 +13,6 @@ var MongoStore = require('connect-mongo')(session);
 var config = require('./config');
 var index = require('./routes/index');
 
-test
-
 // database setup
 app.use(session({
   secret: process.env.SESSION_SECRET || config.session_secret,
@@ -55,5 +53,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// for killing in npm stop
+process.title = process.argv[2];
 
 module.exports = app;

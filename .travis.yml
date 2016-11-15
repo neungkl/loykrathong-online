@@ -10,3 +10,4 @@ services:
   - mongodb
 script:
   - npm start &
+  - npm stop
