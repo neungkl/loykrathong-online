@@ -6,5 +6,7 @@ before_install:
   - cp config.js.default config.js
 install:
   - npm install
+services:
+  - mongodb
 script:
   - node ./bin/www
