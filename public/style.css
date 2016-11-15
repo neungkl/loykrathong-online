@@ -28,15 +28,13 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
-* {
-	font-family: 'Kanit', Tahoma, sans-serif !important;
-}
 html {
 	width: 100%;
 	height: 100%;
 }
 body {
 	line-height: 1;
+	font-family: 'Kanit', Tahoma, sans-serif !important;
 	font-weight: 300;
 	height: 100%;
 }
@@ -58,8 +56,10 @@ table {
 
 
 a {
-    color: #00B7FF;
+    color: inherit;
 }
+
+
 
 .thin-font {
   font-weight: 200;
