@@ -6,3 +6,5 @@ before_install:
   - cp config.js.default config.js
 install:
   - npm install
+script:
+  - node ./bin/www
