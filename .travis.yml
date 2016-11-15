@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "6"
+  - "4"
+before_install:
+  - cp config.js.default config.js
+install:
+  - npm install
+script:
+  - npm start
