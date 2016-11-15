@@ -9,4 +9,4 @@ install:
 services:
   - mongodb
 script:
-  - node ./bin/www
+  - npm start &
